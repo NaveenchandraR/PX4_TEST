@@ -56,13 +56,13 @@ int main (int argc, char** argv)
     int leader_id = 0, id = std::stoi(vehicle_id);
 
     ros::Subscriber state_sub = nh.subscribe<mavros_msgs::State>
-            ("/" + host_name + "/mavros/state", 10, state_cb);
+            ("/mavros/state", 10, state_cb);
     ros::Publisher local_pos_pub = nh.advertise<geometry_msgs::PoseStamped>
-            ("/" + host_name + "/mavros/setpoint_position/local", 10);
+            ("/mavros/setpoint_position/local", 10);
     ros::ServiceClient arming_client = nh.serviceClient<mavros_msgs::CommandBool>
-            ("/" + host_name + "/mavros/cmd/arming");
+            ("/mavros/cmd/arming");
     ros::ServiceClient set_mode_client = nh.serviceClient<mavros_msgs::SetMode>
-            ("/" + host_name + "/mavros/set_mode");
+            ("/mavros/set_mode");
     ros::Subscriber pose_sub = nh.subscribe<px4_test::state>
             ("/uav_" + std::to_string(leader_id) + "/combined", 10, &PoseCallBack);
     ros::ServiceServer leader = nh.advertiseService

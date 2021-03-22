@@ -22,13 +22,8 @@ geometry_msgs::PoseStamped pos, leader_pos;
 void PoseCallBack(const px4_test::stateConstPtr& msg)
 {
     pos.header.stamp = ros::Time::now();
-    pos.pose.position.x = msg->pos_x;
-    pos.pose.position.y = msg->pos_y;
-    pos.pose.position.z = msg->pos_z;
-    pos.pose.orientation.x = msg->quat_x;
-    pos.pose.orientation.y = msg->quat_y;
-    pos.pose.orientation.z = msg->quat_z;
-    pos.pose.orientation.w = msg->quat_w;
+    pos.pose.position = msg->position;
+    pos.pose.orientation = msg->orientation;
 }
 
 void SetPos(const geometry_msgs::PoseStamped setpose)
@@ -58,7 +53,7 @@ int main (int argc, char** argv)
     ros::init(argc, argv, host_name + std::string("_test_node"));
     ros::NodeHandle nh(host_name);
 
-    int leader_id = 0;
+    int leader_id = 0, id = std::stoi(vehicle_id);
 
     ros::Subscriber state_sub = nh.subscribe<mavros_msgs::State>
             ("/" + host_name + "/mavros/state", 10, state_cb);
@@ -71,7 +66,7 @@ int main (int argc, char** argv)
     ros::Subscriber pose_sub = nh.subscribe<px4_test::state>
             ("/uav_" + std::to_string(leader_id) + "/combined", 10, &PoseCallBack);
     ros::ServiceServer leader = nh.advertiseService
-            ("/leader_pose", &Leader);
+            ("/" + host_name + "/leader_pose", &Leader);
 
     //the setpoint publishing rate MUST be faster than 2Hz
     ros::Rate rate(20.0);

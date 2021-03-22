@@ -7,14 +7,8 @@
 px4_test::state out_msg;
 
 void local_position_cb(const geometry_msgs::PoseStamped::ConstPtr& local_msg){
-    out_msg.pos_x = local_msg->pose.position.x;
-    out_msg.pos_y = local_msg->pose.position.y;
-    out_msg.pos_z = local_msg->pose.position.z;
-
-    out_msg.quat_x = local_msg->pose.orientation.x;
-    out_msg.quat_y = local_msg->pose.orientation.y;
-    out_msg.quat_z = local_msg->pose.orientation.z;
-    out_msg.quat_w = local_msg->pose.orientation.w;
+    out_msg.position = local_msg->pose.position;
+    out_msg.orientation = local_msg->pose.orientation;
 }
 
 int main(int argc, char **argv)

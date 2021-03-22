@@ -1,10 +1,3 @@
 std_msgs/Header header
-
-float64 pos_x
-float64 pos_y
-float64 pos_z
-
-float64 quat_x
-float64 quat_y
-float64 quat_z
-float64 quat_w
+geometry_msgs/Point position
+geometry_msgs/Quaternion orientation

@@ -22,16 +22,16 @@ ros::init(argc, argv, node_name);
 ros::NodeHandle nh;
 ROS_INFO("Vehicle namespace set to : %s", vehicle_namespace.c_str());
 
-std::string s1, s2, s3, s4;
-s2 = std::string("/") + vehicle_namespace + std::string("/mavros/local_position/pose");
-s4 = std::string("/") + vehicle_namespace + std::string("/combined");
+std::string s1, s2;
+s1 = std::string("/") + vehicle_namespace + std::string("/mavros/local_position/pose");
+s2 = std::string("/") + vehicle_namespace + std::string("/combined");
 
 ros::Subscriber lpos_sub = nh.subscribe<geometry_msgs::PoseStamped>
-        (s2, 10, local_position_cb);
+        (s1, 10, local_position_cb);
 
    
 ros::Publisher msg_pub = nh.advertise<px4_test::state>
-            (s4, 100);
+            (s2, 100);
 
 ros::Rate rate(5.0);
 

@@ -9,7 +9,8 @@
 #include <mavros_msgs/SetMode.h>
 #include <mavros_msgs/State.h>
 
-#include <mission_planner/pose.h>
+#include <px4_test/pose.h>
+#include <px4_test/state.h>
 
 mavros_msgs::State current_state;
 void state_cb(const mavros_msgs::State::ConstPtr& msg){
@@ -18,9 +19,16 @@ void state_cb(const mavros_msgs::State::ConstPtr& msg){
 
 geometry_msgs::PoseStamped pos, leader_pos;
 
-void PoseCallBack(const geometry_msgs::PoseStampedConstPtr& msg)
+void PoseCallBack(const px4_test::stateConstPtr& msg)
 {
-    pos.pose = msg->pose;
+    pos.header.stamp = ros::Time::now();
+    pos.pose.position.x = msg->pos_x;
+    pos.pose.position.y = msg->pos_y;
+    pos.pose.position.z = msg->pos_z;
+    pos.pose.orientation.x = msg->quat_x;
+    pos.pose.orientation.y = msg->quat_y;
+    pos.pose.orientation.z = msg->quat_z;
+    pos.pose.orientation.w = msg->quat_w;
 }
 
 void SetPos(const geometry_msgs::PoseStamped setpose)
@@ -28,15 +36,14 @@ void SetPos(const geometry_msgs::PoseStamped setpose)
     leader_pos.pose = setpose.pose;
 }
 
-bool Leader(mission_planner::pose::Request& req,
-            mission_planner::pose::Response& res)
+bool Leader(px4_test::pose::Request& req,
+            px4_test::pose::Response& res)
 {
     geometry_msgs::PoseStamped setpose;
     setpose.pose.position.x = req.pos_x;
     setpose.pose.position.y = req.pos_y;
     setpose.pose.position.z = req.pos_z;
     SetPos(setpose);
-    // local_pos_pub.publish(setpose);
     res.success = true;
     return res.success;
 }
@@ -51,12 +58,7 @@ int main (int argc, char** argv)
     ros::init(argc, argv, host_name + std::string("_test_node"));
     ros::NodeHandle nh(host_name);
 
-    int leader_id;
-
-    while(ros::ok() and (not nh.getParam("leader_id", leader_id)))
-    {
-        ROS_INFO("Node waiting for leader id");
-    }
+    int leader_id = 0;
 
     ros::Subscriber state_sub = nh.subscribe<mavros_msgs::State>
             ("/" + host_name + "/mavros/state", 10, state_cb);
@@ -66,8 +68,8 @@ int main (int argc, char** argv)
             ("/" + host_name + "/mavros/cmd/arming");
     ros::ServiceClient set_mode_client = nh.serviceClient<mavros_msgs::SetMode>
             ("/" + host_name + "/mavros/set_mode");
-    ros::Subscriber pose_sub = nh.subscribe<geometry_msgs::PoseStamped>
-            ("/uav_" + std::to_string(leader_id) + "/mavros/local_position/pose", 10, &PoseCallBack);
+    ros::Subscriber pose_sub = nh.subscribe<px4_test::state>
+            ("/uav_" + std::to_string(leader_id) + "/combined", 10, &PoseCallBack);
     ros::ServiceServer leader = nh.advertiseService
             ("/leader_pose", &Leader);
 
@@ -152,7 +154,6 @@ int main (int argc, char** argv)
 
         if(std::stoi(vehicle_id) == leader_id)
         {
-            nh.setParam("leader_publishing", leader_pos.pose.position.z);
             local_pos_pub.publish(leader_pos);
         }
         else

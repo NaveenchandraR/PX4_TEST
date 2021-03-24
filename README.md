@@ -28,6 +28,7 @@ Tab 1: For calling service or checking rostopics
 
 Tab 2:
     export HOST=uav_0
+
     rosrun px4_test state
 Tab 3:
     export HOST=uav_0
@@ -35,16 +36,20 @@ Tab 3:
 
 Tab 4:
     export HOST=uav_1
+
     rosrun px4_test state
 Tab 5:
     export HOST=uav_1
+
     rosrun px4_test offb
 
 Tab 6:
     export HOST=uav_2
+
     rosrun px4_test state
 Tab 7:
     export HOST=uav_2
+    
     rosrun px4_test offb
 
 Here other UAVs are copying the leader UAVs position and maintaining formation. As for the leader, we need to call a service to change its position.

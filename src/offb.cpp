@@ -55,6 +55,8 @@ int main (int argc, char** argv)
 
     int leader_id = 0, id = std::stoi(vehicle_id);
 
+    ROS_INFO("Hostname received. Leader set");
+
     ros::Subscriber state_sub = nh.subscribe<mavros_msgs::State>
             ("/mavros/state", 10, state_cb);
     ros::Publisher local_pos_pub = nh.advertise<geometry_msgs::PoseStamped>
@@ -97,6 +99,8 @@ int main (int argc, char** argv)
 
     ros::Time last_request = ros::Time::now();
 
+    ROS_INFO("Calling OFFBOARD and arming");
+
     while(ros::Time::now() - last_request <= ros::Duration(10.0)){
         if( current_state.mode != "OFFBOARD" &&
             (ros::Time::now() - last_request > ros::Duration(5.0))){
@@ -122,11 +126,15 @@ int main (int argc, char** argv)
         rate.sleep();
     }
 
+    ROS_INFO("Hovering");
+
     leader_pos.pose.position.x = 0;
     leader_pos.pose.position.y = 0;
     leader_pos.pose.position.z = 5;
 
     last_request = ros::Time::now();
+
+    ROS_INFO("Mimicing leader");
 
     while(ros::ok()){
         if( current_state.mode != "OFFBOARD" &&

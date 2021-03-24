@@ -22,8 +22,6 @@ With this, Gazebo SITL should be running
 
 Open 7 new tabs and run the following commands
 
-    export HOST=uav_(id) // id = 0, 1, 2...
-
 Tab 1: For calling service or checking rostopics
 
 Tab 2:
@@ -55,7 +53,7 @@ Tab 6:
     export HOST=uav_2
 
     rosrun px4_test state
-    
+
 Tab 7:
 
     export HOST=uav_2

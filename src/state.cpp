@@ -38,6 +38,7 @@ ros::Rate rate(5.0);
 while(ros::ok()){
 
     out_msg.header.stamp = ros::Time::now();
+    ROS_INFO("Publishing message");
     msg_pub.publish(out_msg);
 
     ros::spinOnce();
